@@ -15,8 +15,10 @@ class ChatMain extends Component
     public $selectedConversation;
     public $receiver;
     public $messages=[];
-    public $paginateVar = 10;
-    public $height;
+    public $selectedConversationId;
+
+
+    public $listeners= ['chatUserSelected'];
 
 
     public function mount()
@@ -34,10 +36,29 @@ class ChatMain extends Component
 
         return view('livewire.chat.chat-main');
     }
+
     public function chatUserSelected(Conversation $conversation,$receiverId)
      {
 
       $this->selectedConversation= $conversation;
-
+      $this->selectedConversationId = $conversation->id;
+      $this->receiverInstance= User::find($receiverId);
      }
+     public function getChatUserInstance(Conversation $conversation, $request)
+    {
+
+        $this->auth_id = auth()->id();
+        if ($conversation->sender_id == $this->auth_id) {
+            $this->receiverInstance = User::firstWhere('id', $conversation->receiver_id);
+
+        } else {
+            $this->receiverInstance = User::firstWhere('id', $conversation->sender_id);
+        }
+
+        if (isset($request)) {
+
+            return $this->receiverInstance->$request;
+
+        }
+    }
 }

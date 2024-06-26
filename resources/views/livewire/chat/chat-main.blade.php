@@ -19,21 +19,35 @@
                             <ul class="list-unstyled">
                                 @if (count($conversations) > 0)
                                     @foreach ($conversations as $conversation)
-                                    <li class="py-3 hover-bg-light rounded-2xl transition flex gap-4 cursor-pointer px-2" wire:click="$emit('chatUserSelected', {{$conversation}},{{$this->getChatUserInstance($conversation, $name = 'id') }})">
+                                    {{-- <li class="chatlist_item d-flex p-2 my-2 mx-1 rounded bg-light cursor-pointer" style="width: 95%;" wire:key='{{$conversation->id}}' wire:click="chatUserSelected({{$conversation}}, {{$this->getChatUserInstance($conversation, $name = 'id')}})"> --}}
+                                    <li class="chatlist_item d-flex p-2 my-2 mx-1 rounded bg-light cursor-pointer"
+                                    style="width: 96%;"
+                                    wire:key='{{$conversation->id}}'
+                                    wire:click="chatUserSelected({{ $conversation }},{{$this->getChatUserInstance($conversation, $name = 'id') }})"
+                                    :class="{ 'bg-primary text-white': $selectedConversationId === {{ $conversation->id }} }">
+                                    {{-- <li iclass="py-3 hover-bg-light rounded-2xl transition flex gap-4 cursor-pointer px-2" wire:click="$emit('chatUserSelected', {{$conversation}},{{$this->getChatUserInstance($conversation, $name = 'id') }})"> --}}
                                         <a href="#"class="shrink-0">
-                                            <img  class="rounded-circle" src="https://ui-avatars.com/api/?background=0D8ABC&color=fff&name=USER" alt="">
+                                            <img src="https://ui-avatars.com/api/?name={{$this->getChatUserInstance($conversation, $name = 'name')}}" class="img-fluid rounded-circle">
                                         </a>
                                         <div class="flex-grow-1">
                                             <div class="d-flex justify-content-between align-items-center">
-                                                <h6 class="font-weight-bold mb-0">Receiver's Name</h6>
-                                                <small class="text-muted">10 mins ago</small>
-                                            </div>
+                                                {{ $this->getChatUserInstance($conversation, $name = 'name') }}
+                                                <span class="text-muted" style="font-size: 13px;">
+                                                    {{ $conversation->messages->last()?->created_at->shortAbsoluteDiffForHumans() }}
+                                                </span>
+                                                </div>
                                             <div class="d-flex gap-2 align-items-center">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check2-all" viewBox="0 0 16 16">
                                                     <path d="M12.354 4.354a.5.5 0 0 0-.708-.708L5 10.293 1.854 7.146a.5.5 0 1 0-.708.708l3.5 3.5a.5.5 0 0 0 .708 0l7-7zm-4.208 7-.896-.897.707-.707.543.543 6.646-6.647a.5.5 0 0 1 .708.708l-7 7a.5.5 0 0 1-.708 0z"/>
                                                     <path d="m5.354 7.146.896.897-.707.707-.897-.896a.5.5 0 1 1 .708-.708z"/>
                                                 </svg>
-                                                <p class="mb-0 text-truncate">Last message body</p>
+                                                <p class="mb-0 text-truncate">
+                                                    @if (strlen($conversation->messages->last()->body) > 25)
+                                                    {{ substr($conversation->messages->last()->body, 0, 25) . '...' }}
+                                                @else
+                                                    {{ $conversation->messages->last()->body }}
+                                                @endif
+                                                </p>
                                                 @if (true)
                                                 <span class="badge bg-primary text-white">1</span>
                                                 @endif
@@ -64,27 +78,23 @@
             </div>
            <div class="col-8">
             <div class="">
-                {{-- Stop trying to control. --}}
-
                 @if ($selectedConversation)
                     <div class="chatbox-header d-flex  p-2  bg-white">
 
                         <div class="img-container me-3">
-                            <img src="https://ui-avatars.com/api/?name=BH" alt="" class="rounded-circle">
-                            {{-- <img src="https://ui-avatars.com/api/?name={{ $receiverInstance->name }}" alt="" class="rounded-circle"> --}}
+                            <img src="https://ui-avatars.com/api/?name={{ $receiverInstance->name }}" alt="" class="rounded-circle">
                         </div>
 
                         <div class="name flex-grow-1 h4 mt-3">
-                            {{-- {{ $receiverInstance->name }} --}}
-                            Bienvenu
+                            {{ $receiverInstance->name }}
                         </div>
 
                     </div>
 
+                    {{ $selectedConversation }}
                     <div class="chatbox-body p-3 overflow-auto" style="height: calc(100vh - 220px);">
                         @foreach ($messages as $message)
                             <div class="msg-body {{ auth()->id() == $message->sender_id ? 'bg-primary text-white align-self-end' : 'bg-light text-dark' }} p-2 mb-2 rounded" style="width:80%; max-width: max-content;">
-                                {{ $message->body }}
                                 <div class="msg-body-footer d-flex justify-content-between mt-1">
                                     <div class="date small text-muted">
                                         {{ $message->created_at->format('h:i a') }}
@@ -140,23 +150,6 @@
                         </div>
                     </footer>
 
-                    <script>
-                        $(".chatbox-body").on('scroll', function() {
-                            var top = $('.chatbox-body').scrollTop();
-                            if (top == 0) {
-                                window.livewire.emit('loadmore');
-                            }
-                        });
-                    </script>
-
-                    <script>
-                        window.addEventListener('updatedHeight', event => {
-                            let oldHeight = event.detail.height;
-                            let newHeight = $('.chatbox-body')[0].scrollHeight;
-                            let height = $('.chatbox-body').scrollTop(newHeight - oldHeight);
-                            window.livewire.emit('updateHeight', { height: height });
-                        });
-                    </script>
                 @else
                     <div class="fs-4 text-center text-primary mt-5">
                         Aucune conversation sélectionnée
