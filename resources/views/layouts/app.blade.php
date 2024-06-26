@@ -16,6 +16,7 @@
 
         <!-- Styles -->
         @livewireStyles
+        @vite(['resources/sass/app.scss', 'resources/js/app.js'])
     </head>
     <body class="font-sans antialiased">
         <x-banner />
