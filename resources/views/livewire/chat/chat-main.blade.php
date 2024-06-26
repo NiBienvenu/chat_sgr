@@ -1,4 +1,5 @@
 <div>
+
     <div class="container-fluid">
         <div class="container-fluid row">
             <div class="col-4">
@@ -90,31 +91,44 @@
                         </div>
 
                     </div>
+                    <div class="chatbox_body">
+            @foreach ($messages as $message)
+                <div class="msg_body  {{ auth()->id() == $message->sender_id ? 'msg_body_me' : 'msg_body_receiver' }}"
+                    style="width:80%;max-width:80%;max-width:max-content">
 
-                    {{ $selectedConversation }}
-                    <div class="chatbox-body p-3 overflow-auto" style="height: calc(100vh - 220px);">
-                        @foreach ($messages as $message)
-                            <div class="msg-body {{ auth()->id() == $message->sender_id ? 'bg-primary text-white align-self-end' : 'bg-light text-dark' }} p-2 mb-2 rounded" style="width:80%; max-width: max-content;">
-                                <div class="msg-body-footer d-flex justify-content-between mt-1">
-                                    <div class="date small text-muted">
-                                        {{ $message->created_at->format('h:i a') }}
-                                    </div>
+                    {{ $message->body }}
+                    <div class="msg_body_footer">
+                        <div class="date">
+                            {{ $message->created_at->format('m: i a') }}
+                        </div>
 
-                                    <div class="read small text-muted">
-                                        @php
-                                            if($message->user->id === auth()->id()){
-                                                if($message->read == 0){
-                                                    echo '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check2 status-tick" viewBox="0 0 16 16"><path d="M13.854 4.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 0 1 .708-.708l3.146 3.147 6.646-6.647a.5.5 0 0 1 .708 0z"/></svg>';
-                                                } else {
-                                                    echo '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check2-all text-primary" viewBox="0 0 16 16"><path d="M7.854 4.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 0 1 .708-.708l3.146 3.147 6.646-6.647a.5.5 0 0 1 .708 0z"/><path d="M11.854 4.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 0 1 .708-.708l3.146 3.147 6.646-6.647a.5.5 0 0 1 .708 0z"/></svg>';
-                                                }
-                                            }
-                                        @endphp
-                                    </div>
-                                </div>
-                            </div>
-                        @endforeach
+                        <div class="read">
+                            @php
+
+                          if($message->sender->id === auth()->id()){
+
+
+                                    if($message->read == 0){
+
+
+                                        echo'<i class="bi bi-check2 status_tick "></i> ';
+                                    }
+                                    else {
+                                        echo'<i class="bi bi-check2-all text-primary  "></i> ';
+                                    }
+
+                          }
+
+
+                            @endphp
+
+
+                        </div>
                     </div>
+                </div>
+            @endforeach
+
+        </div>
 
                     <footer class="shrink-0 z-10 bg-white inset-x-0 border-top">
                         <div class="p-2 border-t">
@@ -163,6 +177,17 @@
         </div>
     </div>
 
-    .
+    <script>
+            $(".chatbox_body").on('scroll', function() {
+                // alert('aahsd');
+                var top = $('.chatbox_body').scrollTop();
+                //   alert('aasd');
+                if (top == 0) {
+
+                    window.livewire.emit('loadmore');
+                }
+
+            });
+        </script>
 
 </div>

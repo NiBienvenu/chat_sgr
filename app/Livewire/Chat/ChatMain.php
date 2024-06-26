@@ -3,6 +3,7 @@
 namespace App\Livewire\Chat;
 
 use App\Models\Conversation;
+use App\Models\Message;
 use App\Models\User;
 use Livewire\Component;
 
@@ -16,6 +17,8 @@ class ChatMain extends Component
     public $receiver;
     public $messages=[];
     public $selectedConversationId;
+    public $paginateVar = 10;
+    public $height;
 
 
     public $listeners= ['chatUserSelected'];
@@ -43,6 +46,7 @@ class ChatMain extends Component
       $this->selectedConversation= $conversation;
       $this->selectedConversationId = $conversation->id;
       $this->receiverInstance= User::find($receiverId);
+      $this->loadmore();
      }
      public function getChatUserInstance(Conversation $conversation, $request)
     {
@@ -60,5 +64,17 @@ class ChatMain extends Component
             return $this->receiverInstance->$request;
 
         }
+    }
+    function loadmore()
+    {
+
+        $this->paginateVar = $this->paginateVar + 10;
+        $this->messages_count = Message::where('conversation_id', $this->selectedConversation->id)->count();
+
+        $this->messages = Message::with('sender')->where('conversation_id',  $this->selectedConversation->id)
+            ->skip($this->messages_count -  $this->paginateVar)
+            ->take($this->paginateVar)->get();
+
+        $height = $this->height;
     }
 }
