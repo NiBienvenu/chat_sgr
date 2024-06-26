@@ -17,38 +17,46 @@
                         </header>
                         <main class="p-2 chat-main">
                             <ul class="list-unstyled">
-                                <li class="py-3 hover-bg-light rounded-2xl transition flex gap-4 cursor-pointer px-2">
-                                    <a href="#"class="shrink-0">
-                                        <img  class="rounded-circle" src="https://ui-avatars.com/api/?background=0D8ABC&color=fff&name=USER" alt="">
-                                    </a>
-                                    <div class="flex-grow-1">
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <h6 class="font-weight-bold mb-0">Receiver's Name</h6>
-                                            <small class="text-muted">10 mins ago</small>
+                                @if (count($conversations) > 0)
+                                    @foreach ($conversations as $conversation)
+                                    <li class="py-3 hover-bg-light rounded-2xl transition flex gap-4 cursor-pointer px-2" wire:click="$emit('chatUserSelected', {{$conversation}},{{$this->getChatUserInstance($conversation, $name = 'id') }})">
+                                        <a href="#"class="shrink-0">
+                                            <img  class="rounded-circle" src="https://ui-avatars.com/api/?background=0D8ABC&color=fff&name=USER" alt="">
+                                        </a>
+                                        <div class="flex-grow-1">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <h6 class="font-weight-bold mb-0">Receiver's Name</h6>
+                                                <small class="text-muted">10 mins ago</small>
+                                            </div>
+                                            <div class="d-flex gap-2 align-items-center">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check2-all" viewBox="0 0 16 16">
+                                                    <path d="M12.354 4.354a.5.5 0 0 0-.708-.708L5 10.293 1.854 7.146a.5.5 0 1 0-.708.708l3.5 3.5a.5.5 0 0 0 .708 0l7-7zm-4.208 7-.896-.897.707-.707.543.543 6.646-6.647a.5.5 0 0 1 .708.708l-7 7a.5.5 0 0 1-.708 0z"/>
+                                                    <path d="m5.354 7.146.896.897-.707.707-.897-.896a.5.5 0 1 1 .708-.708z"/>
+                                                </svg>
+                                                <p class="mb-0 text-truncate">Last message body</p>
+                                                @if (true)
+                                                <span class="badge bg-primary text-white">1</span>
+                                                @endif
+                                            </div>
                                         </div>
-                                        <div class="d-flex gap-2 align-items-center">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check2-all" viewBox="0 0 16 16">
-                                                <path d="M12.354 4.354a.5.5 0 0 0-.708-.708L5 10.293 1.854 7.146a.5.5 0 1 0-.708.708l3.5 3.5a.5.5 0 0 0 .708 0l7-7zm-4.208 7-.896-.897.707-.707.543.543 6.646-6.647a.5.5 0 0 1 .708.708l-7 7a.5.5 0 0 1-.708 0z"/>
-                                                <path d="m5.354 7.146.896.897-.707.707-.897-.896a.5.5 0 1 1 .708-.708z"/>
-                                            </svg>
-                                            <p class="mb-0 text-truncate">Last message body</p>
-                                            @if (true)
-                                            <span class="badge bg-primary text-white">1</span>
-                                            @endif
+                                        <div class="dropdown">
+                                            <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 16 16">
+                                                    <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/>
+                                                </svg>
+                                            </button>
+                                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                <li><a class="dropdown-item" href="#">View Profile</a></li>
+                                                <li><a class="dropdown-item" href="#">Delete</a></li>
+                                            </ul>
                                         </div>
-                                    </div>
-                                    <div class="dropdown">
-                                        <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 16 16">
-                                                <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/>
-                                            </svg>
-                                        </button>
-                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                            <li><a class="dropdown-item" href="#">View Profile</a></li>
-                                            <li><a class="dropdown-item" href="#">Delete</a></li>
-                                        </ul>
-                                    </div>
-                                </li>
+                                    </li>
+                                 @endforeach
+                                  @else
+                                        <div class=" text-center">
+                                            vous n'avez pas de conversations
+                                        </div>
+                                  @endif
                             </ul>
                         </main>
                     </div>
@@ -58,7 +66,7 @@
             <div class="">
                 {{-- Stop trying to control. --}}
 
-                @if (true)
+                @if ($selectedConversation)
                     <div class="chatbox-header d-flex  p-2  bg-white">
 
                         <div class="img-container me-3">
@@ -151,31 +159,11 @@
                     </script>
                 @else
                     <div class="fs-4 text-center text-primary mt-5">
-                        No conversation selected
+                        Aucune conversation sélectionnée
                     </div>
                 @endif
 
-                <script>
-                    window.addEventListener('rowChatToBottom', event => {
-                        $('.chatbox-body').scrollTop($('.chatbox-body')[0].scrollHeight);
-                    });
-                </script>
 
-                <script>
-                    $(document).on('click', '.return', function() {
-                        window.livewire.emit('resetComponent');
-                    });
-                </script>
-
-                <script>
-                    window.addEventListener('markMessageAsRead', event => {
-                        var elements = document.querySelectorAll('.status-tick');
-                        elements.forEach(element => {
-                            element.classList.remove('bi', 'bi-check2');
-                            element.classList.add('bi', 'bi-check2-all', 'text-primary');
-                        });
-                    });
-                </script>
             </div>
 
            </div>
